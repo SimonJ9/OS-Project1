@@ -51,12 +51,32 @@ int main(int argc, char* argv[]) {
     print_queue(&process_queue);
 #endif
 
+    /* Simulation Configuration
+     *
+     * n: number of processes to simulate
+     * m: number of processors available within CPU
+     * t_cs: context switch time
+     * t_slice: time slice for RR
+     *
+     */
+    const unsigned int n = process_queue._size;
+    const unsigned int m = 1;
+    const unsigned int t_cs = 6;
+    const unsigned int t_slice = 94;
+    
+    /*Avoid warnings*/
+    if(n != process_queue._size ||
+        m > 1)
+    {
+        return EXIT_FAILURE;    
+    }
+    
     /*Do Sim-Algos Here*/
-    sim_FCFS(&process_queue);
+    sim_FCFS(&process_queue, t_cs);
     
-    sim_SRT(&process_queue);
+    sim_SRT(&process_queue, t_cs);
     
-    sim_RR(&process_queue);
+    sim_RR(&process_queue, t_cs, t_slice);
     
 
 

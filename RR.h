@@ -3,7 +3,9 @@
  *
  */
 
-void sim_RR(const struct proc_queue* q)
+void sim_RR(const struct proc_queue* q, 
+            const unsigned int t_cs, 
+            const unsigned int t_slice)
 {
     /*data section*/
     unsigned int current_time = 0;

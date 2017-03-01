@@ -1,3 +1,6 @@
+/* This header contains FILE parsing other operations.
+ * Add any functions related to FILE IO here
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,6 +9,28 @@
 
 #include "proc_queue.h"
 
+/* Signatures */
+
+/* Use this to read and check file 
+ * Only takes "r" and "w" mode for fopen()
+ */
+FILE* check_file_status(FILE* f, char* name, char* mode);
+
+/* fclose() */
+int close_file(FILE* f);
+
+/* Takes the input file, parses and creates processes 
+ * depending on the input. If the input format is not 
+ * correct, returns -1. Returns 1 upon success
+ */
+int parse_input(FILE* input, struct proc_queue* queue);
+
+/* Writes Sim-output to output file
+ */
+void write_output(FILE* output);
+
+
+/* Implementation */
 FILE* check_file_status(FILE* f, char* name, char* mode)
 {
     if(!(strcmp(mode, "w") == 0 ||
@@ -29,6 +54,11 @@ int close_file(FILE* f)
 
 int parse_input(FILE* input, struct proc_queue* queue)
 {
+    if(input == NULL)
+    {
+        return -1;
+    }
+    
     int buf_size = 100;
     char buffer[buf_size];
     
@@ -61,16 +91,6 @@ int parse_input(FILE* input, struct proc_queue* queue)
         s = strtok(NULL, "|");
         if(s == NULL) { return -1; }
         temp._t_io = atoi(s);
-        
-        /*
-        printf("ID: %c, ARR: %d, BUR: %d, NBUR: %d, IO: %d\n", 
-            temp._PID, 
-            temp._t_arrival, 
-            temp._t_burst, 
-            temp._n_burst, 
-            temp._t_io);
-        */
-        
         
         add_process(queue, &temp);
     }

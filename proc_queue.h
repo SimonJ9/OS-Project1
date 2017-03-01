@@ -1,6 +1,6 @@
-/*
- *This header contains functions for adding process to, and removing 
- *process from the process queue
+/* This header contains functions for adding process to, and removing 
+ * process from the process queue. Add any functions related to queue 
+ * operation here.
  */
 
 struct process
@@ -19,6 +19,34 @@ struct proc_queue
     struct process* _queue;
 };
 
+/* Signatures */
+
+/* Use this function to initialize or clear the process queue. 
+ * It zeroes all variables in the queue, and makes the queue 
+ * pointing to NULL
+ */
+int queue_initialize(struct proc_queue* queue);
+
+/* Adding process into the queue, returns 1 upon success
+ * Automatically resizes the queue if necessary
+ */
+int add_process(struct proc_queue* queue, const struct process* p);
+
+/* Remove the process from the queue, returns 1 upon success
+ * Automatically resizes the queue if necessary
+ */
+int remove_process(struct proc_queue* queue, const struct process* p);
+
+/* Returns the queue status in the format of homework requirement
+ * Use this to print out content in queue
+ * Examples: 
+ *      empty queue: [Q <empty>]
+ *      non-empty queue: [Q A B C]
+ */
+char* queue_status(struct proc_queue* queue);
+
+
+/* Implementation */
 int queue_initialize(struct proc_queue* queue)
 {
     queue->_size = 0;
