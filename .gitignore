@@ -1,0 +1,2 @@
+#Don't include .out and output text file
+*.out
