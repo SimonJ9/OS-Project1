@@ -18,8 +18,10 @@ void sim_FCFS(const struct proc_queue* q, const unsigned int t_cs)
     
     
     /*test*/
+
     
     /*c9test*/
+
     printf("time %dms: Simulator ended for FCFS %s\n", 
             current_time, queue_status(&queue));
 }
