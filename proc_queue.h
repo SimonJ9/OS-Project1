@@ -2,6 +2,10 @@
  * process from the process queue. Add any functions related to queue 
  * operation here.
  */
+ 
+
+
+#define max(a,b) ((a) > (b) ? (a) : (b))
 
 struct process
 {
@@ -11,6 +15,45 @@ struct process
     int _n_burst;
     int _t_io;
 };
+
+struct cpu
+{
+    unsigned int _t_cs_remain;
+    int start;
+    int _t_remaining;
+    struct process *_p;
+
+};
+
+int cpu_Initialize(struct cpu *cPU);//structure initializer
+int cpu_AddProcess(struct cpu *cPU, struct process p, unsigned int cs_time);//copy a process into a CPU
+void cpu_TimePass(struct cpu *cPU);//change of process behavior in cPU
+
+int cpu_Initialize(struct cpu *cPU)
+{
+    cPU->_t_cs_remain = 0;
+    cPU->_t_remaining = 0;
+    cPU->_p = NULL;
+    cPU->start = 0;
+    return 1;
+}
+
+int cpu_AddProcess(struct cpu *cPU, struct process p, unsigned int cs_time)
+{
+    cPU->_p = &p;
+    cPU->_t_cs_remain = cs_time;
+    cPU->_t_remaining = cPU->_p->_t_burst;
+    return 1;
+}
+
+void cpu_TimePass(struct cpu *cPU){
+    if (cPU->_t_cs_remain == 0){
+        cPU->start = 1;
+        cPU->_t_remaining--;
+    }
+    cPU->_t_cs_remain = max(0, cPU->_t_cs_remain-1);
+}
+
 
 struct proc_queue
 {
