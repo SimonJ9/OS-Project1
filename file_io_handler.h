@@ -7,7 +7,8 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "proc_queue.h"
+
+#include "io_cpu.h"
 
 /* Signatures */
 
