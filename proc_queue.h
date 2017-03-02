@@ -16,6 +16,8 @@ struct process
     int _t_io;
 };
 
+
+/*structure for recording process behavior in CPU*/
 struct cpu
 {
     int _t_cs1_remain;
@@ -68,6 +70,7 @@ void cpu_TimePass(struct cpu *cPU){
 }
 
 
+/*structure recordng certain process in I/O*/
 struct iotime
 {
     int io_remaining;
@@ -87,6 +90,7 @@ int iotime_addProcess(struct iotime* ioTime, const struct process* p){
     return 1;
 }
 
+/*structure recording lists of preocess in I/O*/
 struct iolist
 {
     unsigned int _size;
@@ -165,6 +169,7 @@ int io_RemoveProcess(struct iolist* ioList, const struct process* p)
 }
 
 
+/*one call of the function reduces 1ms of all process in I/O*/
 int io_TimePass(struct iolist* ioList){
     if (ioList->_io != NULL){
         int i;
@@ -175,6 +180,8 @@ int io_TimePass(struct iolist* ioList){
     return 1;
     
 }
+
+
 struct proc_queue
 {
     unsigned int _size;
