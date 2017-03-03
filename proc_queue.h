@@ -47,7 +47,7 @@ int add_process(struct proc_queue* queue, const struct process* p);
  * Automatically resizes the queue if necessary
  */
 int remove_process(struct proc_queue* queue, const struct process* p);
-int remove_process(struct proc_queue* queue);
+void remove_first(struct proc_queue* queue);
 
 /* Returns the queue status in the format of homework requirement
  * Use this to print out content in queue
@@ -125,15 +125,14 @@ int remove_process(struct proc_queue* queue, const struct process* p)
     return -1;
 }
 
-int remove_process(struct proc_queue* queue)
+void remove_first(struct proc_queue* queue)
 {
-    process* tmp = queue->_queue[0];
-    if(tmp != null)
+    if(queue == NULL)
     {
-        remove_process(queue, tmp);
-        return 1;
+        return;
     }
-    return -1;
+    struct process tmp = queue->_queue[0];
+    remove_process(queue, &tmp);
 }
 
 /*Use this to print queue status*/

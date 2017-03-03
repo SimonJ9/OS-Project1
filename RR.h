@@ -15,12 +15,12 @@ void sim_RR(const struct proc_queue* q,
     queue_initialize(&ready_queue);
     
     printf("time %dms: Simulator started for RR %s\n", 
-            current_time, queue_status(&queue));
+            current_time, queue_status(&ready_queue));
     
     /*TODO: Implement Algo Here*/
     
     /*cpu started working. time increasing in each loop*/
-    while(true)
+    while(1)
     {
         /*add process to ready queue upon arrival*/
         if(q->_queue[id]._t_arrival == current_time)
@@ -28,11 +28,11 @@ void sim_RR(const struct proc_queue* q,
             add_process(&ready_queue, &(q->_queue[id]));
         }
         
-        
+        break;
         current_time++;
     }
     
     
     printf("time %dms: Simulator ended for RR %s\n", 
-            current_time, queue_status(&queue));
+            current_time, queue_status(&ready_queue));
 }
