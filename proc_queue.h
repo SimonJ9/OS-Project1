@@ -14,9 +14,11 @@ struct process
     int _t_burst;
     int _n_burst;
     int _t_io;
+    int io_countdown;
+    int burst_countdown;
+    int switch_in_countdown;
+    int switch_out_countdown;
 };
-
-
 
 
 struct proc_queue
@@ -68,7 +70,6 @@ int add_process(struct proc_queue* queue, const struct process* p)
 {
     if(queue->_size > queue->_cap)
     {
-        printf("fail1\n");
         return -1;
     }
     
