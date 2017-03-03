@@ -131,6 +131,7 @@ int remove_process(struct proc_queue* queue)
     if(tmp != null)
     {
         remove_process(queue, tmp);
+        return 1;
     }
     return -1;
 }
