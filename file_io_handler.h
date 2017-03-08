@@ -60,7 +60,6 @@ int parse_input(FILE* input, struct proc_queue* queue)
         return -1;
     }
     
-    int buf_size = 100;
     char buffer[buf_size];
     
     while(fgets(buffer, buf_size, (FILE*)input) != NULL)
@@ -108,7 +107,7 @@ void write_output(FILE* output)
 void print_queue(const struct proc_queue* queue)
 {
     printf("Current processes in the queue:\n");
-    int i;
+    unsigned int i;
     for(i = 0; i < queue->_size; i++)
     {
         printf("ID: %c, ARR: %d, BUR: %d, NBUR: %d, IO: %d\n",

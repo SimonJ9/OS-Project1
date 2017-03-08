@@ -4,8 +4,8 @@
  */
  
 
-
 #define max(a,b) ((a) > (b) ? (a) : (b))
+#define buf_size 255;
 
 struct process
 {
@@ -102,7 +102,7 @@ int add_process(struct proc_queue* queue, const struct process* p)
 
 int remove_process(struct proc_queue* queue, const struct process* p)
 {
-    int i, j;
+    unsigned int i, j;
     for(i = 0; i < queue->_size; i++)
     {
         if(queue->_queue[i]._PID == p->_PID)
@@ -131,6 +131,10 @@ void remove_first(struct proc_queue* queue)
     {
         return;
     }
+	if (queue->_size == 0)
+	{
+		return;
+	}
     struct process tmp = queue->_queue[0];
     remove_process(queue, &tmp);
 }
@@ -138,20 +142,22 @@ void remove_first(struct proc_queue* queue)
 /*Use this to print queue status*/
 char* queue_status(struct proc_queue* queue)
 {
-    char* result = (char*)malloc(2 * sizeof(char));
+	char* result = (char*)malloc(255);
     result = strcpy(result, "[Q");
-    int i;
+    unsigned int i;
+	unsigned int id = 0;
     if(queue->_size == 0)
     {
-        result = (char*)realloc(result, 11 * sizeof(char));
         strcat(result, " <empty>]");
         return result;
     }
-    result = (char*)realloc(result, (2*(queue->_size)+3)*sizeof(char));
+	id = 3;
     for(i = 0; i < queue->_size; i++)
     {
         strcat(result, " ");
-        strcat(result, &(queue->_queue[i]._PID));
+		result[id] = queue->_queue[i]._PID;
+		result[id + 1] = '\0';
+		id += 2;
     }
     strcat(result, "]");
     return result;
