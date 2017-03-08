@@ -44,69 +44,7 @@ void sim_SRT(const struct proc_queue* q, const unsigned int t_cs)
     
     while(stillworking)
     {
-        
-        /*chck if any new process*/
         int i;
-        for (i = 0; i < q->_size; i++){
-            if (current_time == q->_queue[i]._t_arrival){
-                /* check if preempt occur */
-                if ((&bqueue)->_queue != NULL && check_preempt(&((&bqueue)->_queue[0]),&(q->_queue[i])) > 0) {
-                                
-                    printf("time %dms: Process %c arrived and will preempt %c %s\n", current_time, q->_queue[i]._PID, (&bqueue)->_queue[0]._PID, queue_status(&rqueue));
-                    fflush(stdout);
-                    
-                    addq = add_process((&rqueue),(const struct process *) &(q->_queue[i]));
-                    if (addq < 0) fprintf(stderr, "ERROR: add failed\n");
-                    /* if the old first one in ready queue are switching in */
-                }
-                else {
-                    addq = add_process((&rqueue),(const struct process *) &(q->_queue[i]));
-                    if (addq < 0) fprintf(stderr, "ERROR: add failed\n");
-                    printf("time %dms: Process %c arrived and added to ready queue %s\n", current_time, q->_queue[i]._PID, queue_status(&rqueue));
-                    fflush(stdout);
-                }
-                qsort( (&rqueue)->_queue, (&rqueue)->_size, sizeof( struct process ), compare);
-                
-            }
-        }
-        /*check io queue*/
-        for (i = 0; i < (&ioqueue)->_size && (&ioqueue)->_queue != NULL; i++){
-            
-            if ((&ioqueue)->_queue[i].io_countdown > 0 ) (&ioqueue)->_queue[i].io_countdown--;
-            
-            if ((&ioqueue)->_queue[i].io_countdown == 0){
-                
-                /* check if preempt occur */
-                if ((&bqueue)->_queue != NULL && check_preempt(&((&bqueue)->_queue[0]),&((&ioqueue)->_queue[i])) > 0){
-                    
-                    printf("time %dms: Process %c completed I/O and will preempt %c %s\n", current_time, (&ioqueue)->_queue[i]._PID, (&bqueue)->_queue[0]._PID, queue_status(&rqueue));
-                    fflush(stdout);
-                    
-                    addq = add_process((&rqueue),(const struct process *) &((&ioqueue)->_queue[i]));
-                    if (addq < 0) fprintf(stderr, "ERROR: add failed\n");
-                    
-                    remove_process(&ioqueue, &((&ioqueue)->_queue[i]));
-                    /* if the old first one in ready queue are switching in */
-                    if (switchin == 1) switchin = 0;
-                    if (i < (&ioqueue)->_size) i--;
-                }
-                else{
-                    addq = add_process((&rqueue),(const struct process *) &((&ioqueue)->_queue[i]));
-                    if (addq < 0) fprintf(stderr, "ERROR: add failed\n");
-                    
-                    printf("time %dms: Process %c completed I/O; added to ready queue %s\n", current_time, (&ioqueue)->_queue[i]._PID, queue_status(&rqueue));
-                    fflush(stdout);
-                    
-                    remove_process(&ioqueue, &((&ioqueue)->_queue[i]));
-                    if (i < (&ioqueue)->_size) i--;
-                    
-                }
-                qsort( (&rqueue)->_queue, (&rqueue)->_size, sizeof( struct process ), compare);
-                
-                
-            }
-        }
-        
 
         if ((&bqueue)->_queue != NULL){
             /* preempt occur */
@@ -116,13 +54,15 @@ void sim_SRT(const struct proc_queue* q, const unsigned int t_cs)
                 /* switchout time set */
                 if (switchout == 0) {
                     switchout = 1;
-                    (&bqueue)->_queue[0].switch_out_countdown = t_cs/2;
+                    (&bqueue)->_queue[0].switch_out_countdown = t_cs/2-1;
                 }/* switchout time finish */
                 else if ((&bqueue)->_queue[0].switch_out_countdown != 0){
                     (&bqueue)->_queue[0].switch_out_countdown--;
                 }
                 
                 if (switchout == 1 && (&bqueue)->_queue[0].switch_out_countdown == 0){
+                    (&bqueue)->_queue[0].burst_countdown++;
+                    
                     switchout = 0;
                     addq = add_process((&rqueue),(const struct process *) &((&bqueue)->_queue[0])); /* add back to ready queue*/
                     if (addq < 0) fprintf(stderr, "ERROR: add failed\n");
@@ -177,6 +117,72 @@ void sim_SRT(const struct proc_queue* q, const unsigned int t_cs)
             }
     
         }
+        
+        /*check io queue*/
+        for (i = 0; i < (&ioqueue)->_size && (&ioqueue)->_queue != NULL; i++){
+        
+            
+            if ((&ioqueue)->_queue[i].io_countdown > 0 ) (&ioqueue)->_queue[i].io_countdown--;
+            else{
+                
+                /* check if preempt occur */
+                if ((&bqueue)->_queue != NULL && check_preempt(&((&bqueue)->_queue[0]),&((&ioqueue)->_queue[i])) > 0 && switchout == 0){
+                    
+                    printf("time %dms: Process %c completed I/O and will preempt %c %s\n", current_time, (&ioqueue)->_queue[i]._PID, (&bqueue)->_queue[0]._PID, queue_status(&rqueue));
+                    fflush(stdout);
+                    
+                    addq = add_process((&rqueue),(const struct process *) &((&ioqueue)->_queue[i]));
+                    if (addq < 0) fprintf(stderr, "ERROR: add failed\n");
+                    
+                    remove_process(&ioqueue, &((&ioqueue)->_queue[i]));
+                    /* if the old first one in ready queue are switching in */
+                    if (switchin == 1) switchin = 0;
+                    if (i < (&ioqueue)->_size) i--;
+                    qsort( (&rqueue)->_queue, (&rqueue)->_size, sizeof( struct process ), compare);
+                }
+                else{
+                    addq = add_process((&rqueue),(const struct process *) &((&ioqueue)->_queue[i]));
+                    if (addq < 0) fprintf(stderr, "ERROR: add failed\n");
+                    qsort( (&rqueue)->_queue, (&rqueue)->_size, sizeof( struct process ), compare);
+                    
+                    printf("time %dms: Process %c completed I/O; added to ready queue %s\n", current_time, (&ioqueue)->_queue[i]._PID, queue_status(&rqueue));
+                    fflush(stdout);
+                    
+                    remove_process(&ioqueue, &((&ioqueue)->_queue[i]));
+                    if (i < (&ioqueue)->_size) i--;
+                    
+                }
+                
+            }
+        }
+         /*chck if any new process*/
+        
+        for (i = 0; i < q->_size; i++){
+            if (current_time == q->_queue[i]._t_arrival){
+                /* check if preempt occur */
+                if ((&bqueue)->_queue != NULL && check_preempt(&((&bqueue)->_queue[0]),&(q->_queue[i])) > 0 && switchout == 0) {
+                                
+                    printf("time %dms: Process %c arrived and will preempt %c %s\n", current_time, q->_queue[i]._PID, (&bqueue)->_queue[0]._PID, queue_status(&rqueue));
+                    fflush(stdout);
+                    
+                    addq = add_process((&rqueue),(const struct process *) &(q->_queue[i]));
+                    if (addq < 0) fprintf(stderr, "ERROR: add failed\n");
+                    /* if the old first one in ready queue are switching in */
+                    qsort( (&rqueue)->_queue, (&rqueue)->_size, sizeof( struct process ), compare);
+                
+                }
+                else {
+                    addq = add_process((&rqueue),(const struct process *) &(q->_queue[i]));
+                    if (addq < 0) fprintf(stderr, "ERROR: add failed\n");
+                    qsort( (&rqueue)->_queue, (&rqueue)->_size, sizeof( struct process ), compare);
+                
+                    printf("time %dms: Process %c arrived and added to ready queue %s\n", current_time, q->_queue[i]._PID, queue_status(&rqueue));
+                    fflush(stdout);
+                }
+                
+            }
+        }
+        
         /*No burst, but some ready*/
         if ((&bqueue)->_queue == NULL && (&rqueue)->_queue != NULL){
             
