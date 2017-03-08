@@ -9,123 +9,126 @@ void sim_FCFS(const struct proc_queue* q, const unsigned int t_cs)
     unsigned int current_time = 0;
     struct proc_queue queue;
     
-    struct process* p;
-    
-    struct iolist ioqueue;
-    
+    struct proc_queue ioqueue;
+    struct process p;
     queue_initialize(&queue);
     
-    io_Initialize(&ioqueue);
+    queue_initialize(&ioqueue);
     printf("time %dms: Simulator started for FCFS %s\n", 
             current_time, queue_status(&queue));
-    
+    fflush(stdout);
     /*TODO: Implement Algo Here*/
     
-    int stillworking = 4;
+    int stillworking = q->_size;
     int cs_time = 0;
-    int addq = 0;
-    struct cpu CPU;
-    cpu_Initialize(&CPU);
+    int add = 0;
+    struct process* CPU = NULL;
+    int t = 0;
     
+    //while (current_time < 10000){
     while (stillworking > 0){
         int i;
-        
-
-        
-        for (i = 0; i < q->_size; i++){
-            if (current_time == q->_queue[i]._t_arrival){
-               addq = add_process(&queue,(const struct process *) &(q->_queue[i]));
-               printf("time %dms: Process %c arrived and added to ready queue %s\n", current_time, q->_queue[i]._PID, queue_status(&queue));
-            }
-        }
-        
-        if ((&CPU)->_p != NULL && (&CPU)->_t_remaining == 0){
+        //finish cpu
+        if (CPU != NULL && CPU->burst_countdown == 0 && t == 2){
     		cs_time = t_cs/2;
-    		p = (&CPU)->_p;
-    	    p->_n_burst = p->_n_burst-1;
-    		if (p->_n_burst == 0){//terminate process
-    			printf("time %dms: Process %c terminated %s", current_time, (&CPU)->_p->_PID, queue_status(&queue));
+    	    CPU->_n_burst = CPU->_n_burst-1;
+    		if (CPU->_n_burst == 0){//terminate process
+    			printf("time %dms: Process %c terminated %s\n", current_time, CPU->_PID, queue_status(&queue));
+    			fflush(stdout);
     			stillworking--;
     		}
     		else{ //kick into I/O
-    			printf("time %dms: Process %c completed a (&CPU) burst; %d bursts to go %s\n", current_time, p->_PID, p->_n_burst, queue_status((&queue)));
-    			printf("time %dms: Process %c switching out of (&CPU); will block on I/O until time %dms %s\n", current_time, p->_PID, current_time+p->_t_io+cs_time, queue_status((&queue)));
+    			printf("time %dms: Process %c completed a (&CPU) burst; %d bursts to go %s\n", current_time, CPU->_PID, CPU->_n_burst, queue_status((&queue)));
+    			fflush(stdout);
+    			printf("time %dms: Process %c switching out of (&CPU); will block on I/O until time %dms %s\n", current_time, CPU->_PID, current_time+CPU->_t_io+cs_time, queue_status((&queue)));
+    			fflush(stdout);
     		}
+        }
+        //printf("time %dms: after cpu\n", current_time);
+        
 
-        }
-        if (addq == 0){
-            printf("never add\n");
-        }
-        
-        if ((&CPU)->_p ==  NULL && (&queue)->_queue != NULL){
-            
-            
-            int addcpu = cpu_AddProcess((&CPU), (&queue)->_queue[0], t_cs/2);
-            #ifdef DEBUG_MODE
-                printf("add process %c to cpu\n", (&CPU)->_p->_PID);
-            #endif
-            if (addcpu != 1){
-                fprintf(stderr, "ERROR: Process failed in CPU\n");
-            }
-            int remove = remove_process(&queue, (&CPU)->_p);
-            if (remove < 0){
-                fprintf(stderr, "ERROR: remove not smooth\n");
-            }
-        }
-        
-        if ((&CPU)->_t_cs1_remain == 0 && (&CPU)->start == 0){
-            printf("time %dms: Process %c started using the CPU %s\n", current_time, (&CPU)->_p->_PID, queue_status(&queue));
-        }
-        
-        cpu_TimePass((&CPU));
-        
-        io_TimePass(&ioqueue);
-        
-        
-		if ((&CPU)->_p != NULL && (&CPU)->_t_cs2_remain == 0 ){
-		    if ((&CPU)->_p->_n_burst != 0){
-    		    struct process p;
-    		    p = *((&CPU)->_p);
-    		    //printf("Process %c has io remaining: %d", p->_PID, p->_t_io);
-    		    int add = io_addPorcess(&ioqueue, &p);
-    		    printf("add process %c to I/O\n", p._PID);
+ 		if (CPU != NULL && CPU->switch_out_countdown == 0 && t == 3){
+		    if (CPU->_n_burst != 0){
+    		    p = *CPU;
+    		    add = add_process(&ioqueue, &p);
     		    if (add < 0){
     		       fprintf(stderr, "ERROR: Process %c add to I/O failed\n", p._PID);
     		    }
 		    }
-		    cpu_Initialize(&CPU);
-		    printf("at %dms, CPU reinitialized\n", current_time);
-		}
+		    CPU = NULL;
+		}  
 		
-        //printf("a%db", (&ioqueue)->_io[i].io_remaining);
-        for (i = 0; i < (&ioqueue)->_size; i++){
-            //printf("a%db", (&ioqueue)->_io[i].io_remaining);
-            if ((&ioqueue)->_io[i].io_remaining == 0){
-                printf("I/O end\n");
-                struct process p;
-                p = *((&ioqueue)->_io[i]._p);
-                int remove = io_RemoveProcess(&ioqueue, &p);
-                if (remove < 0){
-                    fprintf(stderr, "ERROR: remove failed\n");
-                }
-                else{
-                    printf("remove successfulof process %c\n", p._PID);
-                }
-                int add = add_process(&queue, &p);
-                if (add < 0){
-                    fprintf(stderr, "ERROR: add failed\n");
-                }else{
-                    printf("add successof process %c\n", p._PID);
-                }
-                printf("time %dms: Process %c completed I/O; added to ready queue %s\n", current_time, p._PID, queue_status(&queue));
-            }
+
+        
+        // if (current_time > 2610 && current_time < 2700){
+        //     //printf("size of queue is %d\n", (&queue)->_size);
+        //     if (CPU != NULL){
+        //         printf("PCU not null");
+        //         printf("time %dms: after push%d, %d, %d, %d\n", current_time, CPU->burst_countdown, CPU->switch_in_countdown, CPU->switch_out_countdown, CPU->io_countdown);
+        //     }
+                
+        // }
+        
+        if (CPU != NULL && CPU->switch_in_countdown == 0 && t == 1){
+            
+            printf("time %dms: Process %c started using the CPU %s\n", current_time, CPU->_PID, queue_status(&queue));
+            fflush(stdout);
         }
         
         
+		
+        for (i = 0; i < (&ioqueue)->_size; i++){
+            if ((&ioqueue)->_queue[i].io_countdown == 0){
+                struct process p;
+                p = (&ioqueue)->_queue[i];
+                int remove = remove_process(&ioqueue, &p);
+                if (remove < 0)
+                    fprintf(stderr, "ERROR: remove failed\n");
+                add = add_process(&queue, &p);
+                if (add < 0)
+                    fprintf(stderr, "ERROR: add failed\n");
+                printf("time %dms: Process %c completed I/O; added to ready queue %s\n", current_time, p._PID, queue_status(&queue));
+                fflush(stdout);
+            }
+        }
         
+        //add a process to ready queue if time reaches arrive time
+        for (i = 0; i < q->_size; i++){
+            //printf("loop size: %d has %c", q->_size, q->_queue[i]._PID);
+            if (current_time == q->_queue[i]._t_arrival){
+                add = add_process(&queue,(const struct process *) &(q->_queue[i]));
+                if (add < 0){
+    		       fprintf(stderr, "ERROR: Process %c add to CPU failed\n", (q->_queue[i])._PID);
+    		    }
+               printf("time %dms: Process %c arrived and added to ready queue %s\n", current_time, q->_queue[i]._PID, queue_status(&queue));
+               fflush(stdout);
+            }
+        }
+        //printf("time %dms: after add\n", current_time);
+        
+        
+        //push into cpu
+        if (CPU ==  NULL && (&queue)->_size > 0){
+            p = (&queue)->_queue[0];
+            
+            CPU = &p;
+            int remove = remove_process(&queue, CPU);
+            if (remove < 0){
+                fprintf(stderr, "ERROR: remove not smooth\n");
+            }
+            CPU->burst_countdown = CPU->_t_burst;
+            CPU->switch_in_countdown = t_cs/2;
+            CPU->switch_out_countdown = t_cs/2;
+            CPU->io_countdown = CPU->_t_io;
+            //printf("start in: %d\n", CPU->burst_countdown);
+        }
+        
+        t = timePass(CPU);
+        
+        queue_timePass(&ioqueue);
         current_time++;
-        //stillworking--;
     }
+
     
 
     /*test*/
@@ -133,6 +136,7 @@ void sim_FCFS(const struct proc_queue* q, const unsigned int t_cs)
     
     /*c9test*/
 
-    printf("time %dms: Simulator ended for FCFS %s\n", 
-            current_time, queue_status(&queue));
+    printf("time %dms: Simulator ended for FCFS\n", 
+            current_time+t_cs/2-1);
+    fflush(stdout);
 }
