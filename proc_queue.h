@@ -5,7 +5,7 @@
  
 
 #define max(a,b) ((a) > (b) ? (a) : (b))
-#define buf_size 255;
+#define buf_size 255
 
 struct process
 {
@@ -20,6 +20,29 @@ struct process
     int switch_out_countdown;
 };
 
+int timePass(struct process* p);
+
+
+int timePass(struct process* p){
+    if (p == NULL)
+        return 0;
+    else if (p->switch_in_countdown > 0){
+        p->switch_in_countdown -= 1;
+        return 1;
+    }else if(p->burst_countdown>0){
+        p->burst_countdown -= 1;
+        return 2;
+    }else if(p->switch_out_countdown >0){
+        p->switch_out_countdown -= 1;
+        return 3;
+    }else{
+        return -1;
+    }
+}
+
+
+
+
 
 struct proc_queue
 {
@@ -27,6 +50,20 @@ struct proc_queue
     unsigned int _cap;
     struct process* _queue;
 };
+
+
+int queue_timePass(struct proc_queue* queue);
+
+int queue_timePass(struct proc_queue* queue){
+    if (queue->_queue != NULL){
+        int i;
+        for (i = 0; i < queue->_size; i++){
+            if (queue->_queue[i].io_countdown > 0)
+                queue->_queue[i].io_countdown -= 1;
+        }
+    }
+    return 1;
+}
 
 
 
@@ -161,4 +198,19 @@ char* queue_status(struct proc_queue* queue)
     }
     strcat(result, "]");
     return result;
+}
+
+
+void printS(struct proc_queue* queue){
+    printf("[Q");
+    if (queue->_size == 0){
+        printf(" <empty>");
+    }else{
+        int i;
+        printf("size of queue: %c", queue->_queue[2]._PID);
+        for (i = 0; i < queue->_size; i++){
+            printf(" %c", queue->_queue[i]._PID);
+        }
+    }
+    printf("]\n");
 }
