@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
     
     if(argc != 3)
     {
-        fprintf(stderr, "ERROR: Invalid input file format\n");
+        fprintf(stderr, "ERROR: Invalid command format\n");
         fprintf(stderr, "USAGE: ./a.out <input-file> <stats-output-file>\n");
         return EXIT_FAILURE;
     }
