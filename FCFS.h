@@ -43,9 +43,12 @@ void sim_FCFS(const struct proc_queue* q, const unsigned int t_cs, FILE* out)
     			fflush(stdout);
     		}
     		else{ //kick into I/O
-    			printf("time %dms: Process %c completed a (&CPU) burst; %d bursts to go %s\n", current_time, CPU->_PID, CPU->_n_burst, queue_status((&queue)));
+    		    if(CPU->_n_burst > 1)
+    			    printf("time %dms: Process %c completed a CPU burst; %d bursts to go %s\n", current_time, CPU->_PID, CPU->_n_burst, queue_status((&queue)));
+    			else
+    			    printf("time %dms: Process %c completed a CPU burst; %d burst to go %s\n", current_time, CPU->_PID, CPU->_n_burst, queue_status((&queue)));
     			fflush(stdout);
-    			printf("time %dms: Process %c switching out of (&CPU); will block on I/O until time %dms %s\n", current_time, CPU->_PID, current_time+CPU->_t_io+cs_time, queue_status((&queue)));
+    			printf("time %dms: Process %c switching out of CPU; will block on I/O until time %dms %s\n", current_time, CPU->_PID, current_time+CPU->_t_io+cs_time, queue_status((&queue)));
     			fflush(stdout);
     		}
         }

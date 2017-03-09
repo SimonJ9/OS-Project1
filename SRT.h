@@ -92,7 +92,10 @@ void sim_SRT(const struct proc_queue* q, const unsigned int t_cs, FILE* out)
                         (&bqueue)->_queue[0]._n_burst--;
                         
                         if ((&bqueue)->_queue[0]._n_burst !=0){
-                            printf("time %dms: Process %c completed a CPU burst; %d bursts to go %s\n",current_time, (&bqueue)->_queue[0]._PID, (&bqueue)->_queue[0]._n_burst, queue_status(&rqueue));
+                            if((&bqueue)->_queue[0]._n_burst > 1)
+                                printf("time %dms: Process %c completed a CPU burst; %d bursts to go %s\n",current_time, (&bqueue)->_queue[0]._PID, (&bqueue)->_queue[0]._n_burst, queue_status(&rqueue));
+                            else
+                                printf("time %dms: Process %c completed a CPU burst; %d burst to go %s\n",current_time, (&bqueue)->_queue[0]._PID, (&bqueue)->_queue[0]._n_burst, queue_status(&rqueue));
                             printf("time %dms: Process %c switching out of CPU; will block on I/O until time %dms %s\n",current_time, (&bqueue)->_queue[0]._PID, current_time+((&bqueue)->_queue[0]._t_io)+3, queue_status(&rqueue));
                             fflush(stdout);
 
