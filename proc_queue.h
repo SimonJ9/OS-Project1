@@ -18,6 +18,7 @@ struct process
     int burst_countdown;
     int switch_in_countdown;
     int switch_out_countdown;
+    int slice_countdown;
 };
 
 int timePass(struct process* p);
