@@ -52,7 +52,7 @@ void sim_SRT(const struct proc_queue* q, const unsigned int t_cs)
     
     while(stillworking)
     {
-        
+        wait += (&rqueue)->_size;
         
         int i;
         
@@ -203,7 +203,8 @@ void sim_SRT(const struct proc_queue* q, const unsigned int t_cs)
             }
         }
         
-
+        
+        
         /*No burst, but some ready*/
         if ((&bqueue)->_queue == NULL && (&rqueue)->_queue != NULL){
             
@@ -240,8 +241,7 @@ void sim_SRT(const struct proc_queue* q, const unsigned int t_cs)
             
         }
         
-        wait += (&rqueue)->_size;
-        if (switchin == 1 && (&rqueue)->_queue[0].switch_in_countdown > 0) wait--;
+        
         
         
         current_time++;
@@ -250,11 +250,10 @@ void sim_SRT(const struct proc_queue* q, const unsigned int t_cs)
     
     current_time--;
     
-    wait = wait/burst_num;
+    wait = wait/burst_num-3;
     
     cpu = cpu / burst_num;
     turnaround = turnaround / burst_num;
-    
     
     
     printf("time %dms: Simulator ended for SRT %s\n", current_time, queue_status(&rqueue));
