@@ -18,7 +18,7 @@ int compare(const void* a, const void* b){
 
 
 
-void sim_SRT(const struct proc_queue* q, const unsigned int t_cs)
+void sim_SRT(const struct proc_queue* q, const unsigned int t_cs, FILE* out)
 {
     /*data section*/
     unsigned int current_time = 0;
@@ -258,4 +258,19 @@ void sim_SRT(const struct proc_queue* q, const unsigned int t_cs)
     
     printf("time %dms: Simulator ended for SRT %s\n", current_time, queue_status(&rqueue));
     fflush(stdout);
+    
+    
+    /*-----@Simon hacked into your code!-----*/
+    printf("\n");
+    fflush(stdout);
+	write_output(
+		out, 
+		cpu, 
+		wait, 
+		turnaround, 
+		cs, 
+		pp, 
+		"SRT"
+	);
+	/*-----@Simon had run away _(:з」∠)_-----*/
 }

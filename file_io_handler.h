@@ -7,7 +7,6 @@
 #include <string.h>
 #include <ctype.h>
 
-
 #include "proc_queue.h"
 
 /* Signatures */
@@ -28,7 +27,8 @@ int parse_input(FILE* input, struct proc_queue* queue);
 
 /* Writes Sim-output to output file
  */
-void write_output(FILE* output);
+void write_output(FILE* output, const float b, const float w, 
+        const float t, const int cs, const int p, const char* algo);
 
 
 /* Implementation */
@@ -98,8 +98,19 @@ int parse_input(FILE* input, struct proc_queue* queue)
     return 1;
 }
 
-void write_output(FILE* output)
+void write_output(FILE* output, const float b, const float w, 
+        const float t, const int cs, const int p, const char* algo)
 {
+    if(output == NULL)
+    {
+        return;
+    }
+    fprintf(output, "Algorithm %s\n", algo);
+    fprintf(output, "-- average CPU burst time: %.2f ms\n", b);
+    fprintf(output, "-- average wait time: %.2f ms\n", w);
+    fprintf(output, "-- average turnaround time: %.2f ms\n", t);
+    fprintf(output, "-- total number of context switches: %d\n", cs);
+    fprintf(output, "-- total number of preemptions: %d\n\n", p);
     
 }
 
@@ -107,14 +118,15 @@ void write_output(FILE* output)
 void print_queue(const struct proc_queue* queue)
 {
     printf("Current processes in the queue:\n");
-    unsigned int i;
+    int i;
     for(i = 0; i < queue->_size; i++)
     {
-        printf("ID: %c, ARR: %d, BUR: %d, NBUR: %d, IO: %d\n",
+        printf("ID: %c, ARR: %d, BUR: %d, NBUR: %d, IO: %d, IOCD: %d\n",
                 queue->_queue[i]._PID,
                 queue->_queue[i]._t_arrival,
                 queue->_queue[i]._t_burst,
                 queue->_queue[i]._n_burst,
-                queue->_queue[i]._t_io);
+                queue->_queue[i]._t_io, 
+                queue->_queue[i].io_countdown);
     }
 }

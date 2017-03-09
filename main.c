@@ -72,11 +72,11 @@ int main(int argc, char* argv[]) {
     }
     
     /*Do Sim-Algos Here*/
-    sim_FCFS(&process_queue, t_cs);
+    sim_FCFS(&process_queue, t_cs, output_file);
     
-    sim_SRT(&process_queue, t_cs);
+    sim_SRT(&process_queue, t_cs, output_file);
     
-    sim_RR(&process_queue, t_cs, t_slice);
+    sim_RR(&process_queue, t_cs, t_slice, output_file);
     
 
 

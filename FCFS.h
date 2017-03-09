@@ -3,7 +3,7 @@
  *
  */
 
-void sim_FCFS(const struct proc_queue* q, const unsigned int t_cs)
+void sim_FCFS(const struct proc_queue* q, const unsigned int t_cs, FILE* out)
 {
     /*data section*/
     unsigned int current_time = 0;
@@ -184,10 +184,31 @@ void sim_FCFS(const struct proc_queue* q, const unsigned int t_cs)
     //     finish -= q->_queue[i]._t_arrival;
     //     finish -= q->_queue[i]._t_io * (q->_queue[i]._n_burst - 1);
     // }
+    
+    
+    
+    
+    /*-----@Simon hacked into your code!-----*/
+    /*
     printf("Algorithm FCFS\n");
     printf("-- average CPU burst time: %.2f ms\n", (float)cpu/(float)n_burst);
     printf("-- average wait time: %.2f ms\n", (float)wait/(float)n_burst);
     printf("-- average turnaround time: %.2f ms\n", (float)turn/(float)n_burst);
     printf("-- total number of context switches: %d\n", n_cs/t_cs);
     printf("-- total number of preemptions: 0\n\n");
+    */
+    printf("\n");
+    fflush(stdout);
+	write_output
+	(
+		out, 
+		(float)cpu/(float)n_burst, 
+		(float)wait/(float)n_burst, 
+		(float)turn/(float)n_burst, 
+		n_cs/t_cs, 
+		0, 
+		"FCFS"
+	);
+	
+	/*-----@Simon had run away _(:з」∠)_-----*/
 }
