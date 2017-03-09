@@ -256,7 +256,7 @@ void sim_SRT(const struct proc_queue* q, const unsigned int t_cs, FILE* out)
     turnaround = turnaround / burst_num;
     
     
-    printf("time %dms: Simulator ended for SRT %s\n", current_time, queue_status(&rqueue));
+    printf("time %dms: Simulator ended for SRT\n", current_time);
     fflush(stdout);
     
     

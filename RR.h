@@ -207,8 +207,8 @@ void sim_RR(const struct proc_queue* q,
 	wait_time -= n_cs * t_cs/2;
 	turnaround_time = wait_time + burst_time + (n_cs + n_burst) * t_cs/2;
 	
-	printf("time %dms: Simulator ended for RR %s\n",
-		current_time, queue_status(&ready_queue));
+	printf("time %dms: Simulator ended for RR\n",
+		current_time);
 	fflush(stdout);
 	
 	write_output(
