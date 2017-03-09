@@ -25,7 +25,13 @@ void sim_FCFS(const struct proc_queue* q, const unsigned int t_cs)
     struct process* CPU = NULL;
     int t = 0;
     
-    //while (current_time < 10000){
+    int cpu = 0;
+    int turn = 0;
+    int wait = 0;
+    int n_cs = 0;
+    //int finish = 0;
+    //float turnaround_time = 0;
+    //while (current_time < 3000){
     while (stillworking > 0){
         int i;
         //finish cpu
@@ -35,7 +41,6 @@ void sim_FCFS(const struct proc_queue* q, const unsigned int t_cs)
     		if (CPU->_n_burst == 0){//terminate process
     			printf("time %dms: Process %c terminated %s\n", current_time, CPU->_PID, queue_status(&queue));
     			fflush(stdout);
-    			stillworking--;
     		}
     		else{ //kick into I/O
     			printf("time %dms: Process %c completed a (&CPU) burst; %d bursts to go %s\n", current_time, CPU->_PID, CPU->_n_burst, queue_status((&queue)));
@@ -48,12 +53,24 @@ void sim_FCFS(const struct proc_queue* q, const unsigned int t_cs)
         
 
  		if (CPU != NULL && CPU->switch_out_countdown == 0 && t == 3){
+ 		    //turnaround_time += current_time - ;
 		    if (CPU->_n_burst != 0){
+		      //  if (current_time > 2000 && current_time < 3000)
+		      //      printf("CPU id is: %c", CPU->_PID);
     		    p = *CPU;
+    		  //  if (current_time > 2000 && current_time < 3000){
+    		  //      p._PID = 'Z';
+    		  //      printf("P id is: %c", p._PID);
+    		  //      printf("CPU id now is: %c", CPU->_PID);
+    		  //  }
     		    add = add_process(&ioqueue, &p);
     		    if (add < 0){
     		       fprintf(stderr, "ERROR: Process %c add to I/O failed\n", p._PID);
     		    }
+		    }else{
+		        printf("CPU turnaround time: %d", q->_queue[0].turnaround_time);
+		        //finish += current_time;
+		        stillworking--;
 		    }
 		    CPU = NULL;
 		}  
@@ -72,7 +89,7 @@ void sim_FCFS(const struct proc_queue* q, const unsigned int t_cs)
         if (CPU != NULL && CPU->switch_in_countdown == 0 && t == 1){
             
             printf("time %dms: Process %c started using the CPU %s\n", current_time, CPU->_PID, queue_status(&queue));
-            fflush(stdout);
+            fflush(stdout); 
         }
         
         
@@ -96,11 +113,12 @@ void sim_FCFS(const struct proc_queue* q, const unsigned int t_cs)
         for (i = 0; i < q->_size; i++){
             //printf("loop size: %d has %c", q->_size, q->_queue[i]._PID);
             if (current_time == q->_queue[i]._t_arrival){
-                add = add_process(&queue,(const struct process *) &(q->_queue[i]));
+                q->_queue[i].turnaround_time = i;
+                add = add_process(&queue, &(q->_queue[i]));
                 if (add < 0){
     		       fprintf(stderr, "ERROR: Process %c add to CPU failed\n", (q->_queue[i])._PID);
     		    }
-               printf("time %dms: Process %c arrived and added to ready queue %s\n", current_time, q->_queue[i]._PID, queue_status(&queue));
+               printf("time %dms: Process %c arrived %d and added to ready queue %s\n", current_time, q->_queue[i]._PID, q->_queue[i].turnaround_time, queue_status(&queue));
                fflush(stdout);
             }
         }
@@ -125,7 +143,22 @@ void sim_FCFS(const struct proc_queue* q, const unsigned int t_cs)
         
         t = timePass(CPU);
         
+        if (t == 1 || t == 3){
+            n_cs += 1;
+        }
+        if (t == 2)
+            cpu+=1;
+        
+        if (t > 0 && t < 4){
+            turn += 1;
+        }
+        
+        turn += (&queue)->_size;
+        wait += (&queue)->_size;
+        
         queue_timePass(&ioqueue);
+        
+        turnaround_timePass(&queue);
         current_time++;
     }
 
@@ -136,7 +169,27 @@ void sim_FCFS(const struct proc_queue* q, const unsigned int t_cs)
     
     /*c9test*/
 
-    printf("time %dms: Simulator ended for FCFS\n", 
-            current_time+t_cs/2-1);
+    printf("time %dms: Simulator ended for FCFS\n\n", 
+            current_time-1);
     fflush(stdout);
+    
+    //float burst_time = 0;
+    int n_burst = 0;
+    int i;
+    for ( i = 0; i < q->_size; i++){
+        //burst_time += q->_queue[i]._n_burst * q->_queue[i]._t_burst;
+        n_burst += q->_queue[i]._n_burst;
+    }
+    //int tr_time = 0;
+    // for (i = 0; i < q->_size; i++){
+    //     printf("around time: %d", q->_queue[i].turnaround_time);
+    //     finish -= q->_queue[i]._t_arrival;
+    //     finish -= q->_queue[i]._t_io * (q->_queue[i]._n_burst - 1);
+    // }
+    printf("Algorithm FCFS\n");
+    printf("-- average CPU burst time: %.2f ms\n", (float)cpu/(float)n_burst);
+    printf("-- average wait time: %.2f ms\n", (float)wait/(float)n_burst);
+    printf("-- average turnaround time: %.2f ms\n", (float)turn/(float)n_burst);
+    printf("-- total number of context switches: %d\n", n_cs/t_cs);
+    printf("-- total number of preemptions: 0\n");
 }
