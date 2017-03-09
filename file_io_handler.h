@@ -110,7 +110,7 @@ void write_output(FILE* output, const float b, const float w,
     fprintf(output, "-- average wait time: %.2f ms\n", w);
     fprintf(output, "-- average turnaround time: %.2f ms\n", t);
     fprintf(output, "-- total number of context switches: %d\n", cs);
-    fprintf(output, "-- total number of preemptions: %d\n\n", p);
+    fprintf(output, "-- total number of preemptions: %d\n", p);
     
 }
 

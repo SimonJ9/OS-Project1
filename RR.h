@@ -52,7 +52,7 @@ void sim_RR(const struct proc_queue* q,
 			current_process.switch_in_countdown = -1;
 			status = queue_status(&ready_queue);
 			if(current_process.burst_countdown < current_process._t_burst)
-				printf("time %dms: Process %c started using the CPU with %dms remaining%s\n", 
+				printf("time %dms: Process %c started using the CPU with %dms remaining %s\n", 
 					current_time, current_process._PID, current_process.burst_countdown, status);
 			else
 				printf("time %dms: Process %c started using the CPU %s\n", current_time, current_process._PID, status);
