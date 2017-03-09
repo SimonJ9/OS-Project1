@@ -40,23 +40,6 @@ void sim_RR(const struct proc_queue* q,
 	/*cpu started working. time increasing in each loop*/
 	while (1)
 	{
-		/*add process to ready queue upon arrival*/
-		while (id < q->_size && q->_queue[id]._t_arrival == current_time)
-		{
-			struct process tmp = q->_queue[id];
-			tmp.burst_countdown = tmp._t_burst;
-			tmp.io_countdown = tmp._t_io;
-			tmp.switch_in_countdown = t_cs / 2;
-			tmp.switch_out_countdown = t_cs / 2;
-			tmp.slice_countdown = t_slice;
-			add_process(&ready_queue, &tmp);
-			status = queue_status(&ready_queue);
-			printf("time %dms: Process %c arrived and added to ready queue %s\n", current_time, q->_queue[id]._PID, status);
-			fflush(stdout);
-			free(status);
-			id++;
-		}
-
 		if (current_process._PID == 0 && ready_queue._size > 0)
 		{
 			current_process = ready_queue._queue[0];
@@ -68,7 +51,11 @@ void sim_RR(const struct proc_queue* q,
 			remove_first(&ready_queue);
 			current_process.switch_in_countdown = -1;
 			status = queue_status(&ready_queue);
-			printf("time %dms: Process %c started using the CPU %s\n", current_time, current_process._PID, status);
+			if(current_process.burst_countdown < current_process._t_burst)
+				printf("time %dms: Process %c started using the CPU with %dms remaining%s\n", 
+					current_time, current_process._PID, current_process.burst_countdown, status);
+			else
+				printf("time %dms: Process %c started using the CPU %s\n", current_time, current_process._PID, status);
 			fflush(stdout);
 			free(status);
 		}
@@ -81,9 +68,14 @@ void sim_RR(const struct proc_queue* q,
 			status = queue_status(&ready_queue);
 			if (current_process._n_burst > 0)
 			{
-				printf("time %dms: Process %c completed a CPU burst, %d bursts to go %s\n",
-					current_time, current_process._PID, current_process._n_burst, status);
-				printf("time %dms: Process %c switching out of CPU; will block on I/O until time %dms. %s\n",
+				if(current_process._n_burst > 1)
+					printf("time %dms: Process %c completed a CPU burst; %d bursts to go %s\n",
+						current_time, current_process._PID, current_process._n_burst, status);
+				else if(current_process._n_burst == 1)
+					printf("time %dms: Process %c completed a CPU burst; %d burst to go %s\n",
+						current_time, current_process._PID, current_process._n_burst, status);
+					
+				printf("time %dms: Process %c switching out of CPU; will block on I/O until time %dms %s\n",
 					current_time, current_process._PID, current_process._t_io + current_time + t_cs / 2, status);
 				fflush(stdout);
 				current_process.io_countdown = current_process._t_io;
@@ -99,9 +91,10 @@ void sim_RR(const struct proc_queue* q,
 			}
 			free(status);
 		}
-
+		
 		/*preemption due to time slice*/
-		if(current_process._PID != 0 && current_process.slice_countdown == 0)
+		if(current_process._PID != 0 && current_process.slice_countdown == 0 &&
+			current_process.switch_in_countdown != -2)
 		{
 			status = queue_status(&ready_queue);
 			if(ready_queue._size > 0)
@@ -154,6 +147,24 @@ void sim_RR(const struct proc_queue* q,
 				block_queue._queue[i].io_countdown--;
 			}
 		}
+		
+		/*add process to ready queue upon arrival*/
+		while (id < q->_size && q->_queue[id]._t_arrival == current_time)
+		{
+			struct process tmp = q->_queue[id];
+			tmp.burst_countdown = tmp._t_burst;
+			tmp.io_countdown = tmp._t_io;
+			tmp.switch_in_countdown = t_cs / 2;
+			tmp.switch_out_countdown = t_cs / 2;
+			tmp.slice_countdown = t_slice;
+			add_process(&ready_queue, &tmp);
+			status = queue_status(&ready_queue);
+			printf("time %dms: Process %c arrived and added to ready queue %s\n", current_time, q->_queue[id]._PID, status);
+			fflush(stdout);
+			free(status);
+			id++;
+		}
+
 		if (current_process._PID == 0 && ready_queue._size > 0)
 		{
 			current_process = ready_queue._queue[0];

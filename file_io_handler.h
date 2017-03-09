@@ -64,9 +64,9 @@ int parse_input(FILE* input, struct proc_queue* queue)
     
     while(fgets(buffer, buf_size, (FILE*)input) != NULL)
     {
-        if(buffer[0] == '#' ||
+        if(buffer[0] == 35 ||
             isblank(buffer[0]) ||
-            buffer[0] == '\n')
+            buffer[0] == 13)
         {
             continue;
         }
