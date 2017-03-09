@@ -66,7 +66,9 @@ int parse_input(FILE* input, struct proc_queue* queue)
     {
         if(buffer[0] == 35 ||
             isblank(buffer[0]) ||
-            buffer[0] == 13)
+            buffer[0] == 13 ||
+			buffer[0] == '#' ||
+			buffer[0] == '\n')
         {
             continue;
         }
