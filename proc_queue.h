@@ -1,8 +1,17 @@
-/* This header contains functions for adding process to, and removing 
+/* CSCI-4210 Operating Systems Project 1
+ *
+ * Group Members:
+ *
+ * Yifan Xu: xuy11
+ * Hantian Jiang: jiangh5
+ * Chenjun Zhou: zhouc3
+ *
+ * This header contains functions for adding process to, and removing 
  * process from the process queue. Add any functions related to queue 
  * operation here.
+ *
  */
- 
+
 
 #define max(a,b) ((a) > (b) ? (a) : (b))
 #define buf_size 255

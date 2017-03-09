@@ -1,10 +1,10 @@
-/*CSCI-4210 Operating Systems Project 1
+/* CSCI-4210 Operating Systems Project 1
  *
- *Group Members:
+ * Group Members:
  *
- *Yifan Xu
- *Hantian Jiang
- *Chenjun Zhou
+ * Yifan Xu: xuy11
+ * Hantian Jiang: jiangh5
+ * Chenjun Zhou: zhouc3
  */
 
 #include "file_io_handler.h"
@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
     
     if(argc != 3)
     {
-        fprintf(stderr, "ERROR: Invalid command format\n");
+        fprintf(stderr, "ERROR: Invalid command ormat\n");
         fprintf(stderr, "USAGE: ./a.out <input-file> <stats-output-file>\n");
         return EXIT_FAILURE;
     }

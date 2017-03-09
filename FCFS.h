@@ -1,7 +1,17 @@
-/*
- *FCFS Simulation
+/* CSCI-4210 Operating Systems Project 1
  *
+ * Group Members:
+ *
+ * Yifan Xu: xuy11
+ * Hantian Jiang: jiangh5
+ * Chenjun Zhou: zhouc3
+ *
+ *
+ * FCFS Simulation
+ *
+ * @Author Yifan Xu -- (IMCJ)
  */
+
 
 void sim_FCFS(const struct proc_queue* q, const unsigned int t_cs, FILE* out)
 {

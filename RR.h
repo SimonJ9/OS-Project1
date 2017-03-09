@@ -1,7 +1,17 @@
-/*
-* RR Simulation
-* @Author Hantian Jiang -- (Simon)
-*/
+/* CSCI-4210 Operating Systems Project 1
+ *
+ * Group Members:
+ *
+ * Yifan Xu: xuy11
+ * Hantian Jiang: jiangh5
+ * Chenjun Zhou: zhouc3
+ *
+ *
+ * RR Simulation
+ *
+ * @Author Hantian Jiang -- (Simon)
+ *
+ */
 
 void sim_RR(const struct proc_queue* q,
 	const unsigned int t_cs,

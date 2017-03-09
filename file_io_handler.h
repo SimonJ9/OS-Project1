@@ -1,5 +1,15 @@
-/* This header contains FILE parsing other operations.
+/* CSCI-4210 Operating Systems Project 1
+ *
+ * Group Members:
+ *
+ * Yifan Xu: xuy11
+ * Hantian Jiang: jiangh5
+ * Chenjun Zhou: zhouc3
+ *
+ *
+ * This header contains FILE parsing other operations.
  * Add any functions related to FILE IO here
+ *
  */
 
 #include <stdio.h>

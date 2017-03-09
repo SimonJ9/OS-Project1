@@ -1,7 +1,18 @@
-/*
- *SRT Simulation
+/* CSCI-4210 Operating Systems Project 1
  *
+ * Group Members:
+ *
+ * Yifan Xu: xuy11
+ * Hantian Jiang: jiangh5
+ * Chenjun Zhou: zhouc3
+ *
+ *
+ * SRT Simulation
+ *
+ * @Author: Chenjun Zhou -- (mu)
  */
+ 
+ 
 int check_preempt(const struct process* a, const struct process* b){
     int ca = a->_t_burst;
     int cb = b->_t_burst;
