@@ -68,7 +68,7 @@ void sim_FCFS(const struct proc_queue* q, const unsigned int t_cs)
     		       fprintf(stderr, "ERROR: Process %c add to I/O failed\n", p._PID);
     		    }
 		    }else{
-		        printf("CPU turnaround time: %d", q->_queue[0].turnaround_time);
+		        //printf("CPU turnaround time: %d", q->_queue[0].turnaround_time);
 		        //finish += current_time;
 		        stillworking--;
 		    }
@@ -113,12 +113,11 @@ void sim_FCFS(const struct proc_queue* q, const unsigned int t_cs)
         for (i = 0; i < q->_size; i++){
             //printf("loop size: %d has %c", q->_size, q->_queue[i]._PID);
             if (current_time == q->_queue[i]._t_arrival){
-                q->_queue[i].turnaround_time = i;
                 add = add_process(&queue, &(q->_queue[i]));
                 if (add < 0){
     		       fprintf(stderr, "ERROR: Process %c add to CPU failed\n", (q->_queue[i])._PID);
     		    }
-               printf("time %dms: Process %c arrived %d and added to ready queue %s\n", current_time, q->_queue[i]._PID, q->_queue[i].turnaround_time, queue_status(&queue));
+               printf("time %dms: Process %c arrived and added to ready queue %s\n", current_time, q->_queue[i]._PID, queue_status(&queue));
                fflush(stdout);
             }
         }
@@ -157,8 +156,7 @@ void sim_FCFS(const struct proc_queue* q, const unsigned int t_cs)
         wait += (&queue)->_size;
         
         queue_timePass(&ioqueue);
-        
-        turnaround_timePass(&queue);
+
         current_time++;
     }
 
@@ -169,7 +167,7 @@ void sim_FCFS(const struct proc_queue* q, const unsigned int t_cs)
     
     /*c9test*/
 
-    printf("time %dms: Simulator ended for FCFS\n\n", 
+    printf("time %dms: Simulator ended for FCFS\n", 
             current_time-1);
     fflush(stdout);
     
@@ -191,5 +189,5 @@ void sim_FCFS(const struct proc_queue* q, const unsigned int t_cs)
     printf("-- average wait time: %.2f ms\n", (float)wait/(float)n_burst);
     printf("-- average turnaround time: %.2f ms\n", (float)turn/(float)n_burst);
     printf("-- total number of context switches: %d\n", n_cs/t_cs);
-    printf("-- total number of preemptions: 0\n");
+    printf("-- total number of preemptions: 0\n\n");
 }

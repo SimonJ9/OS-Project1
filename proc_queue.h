@@ -26,13 +26,13 @@ int timePass(struct process* p);
 int timePass(struct process* p){
     if (p == NULL)
         return 0;
-    else if (p->switch_in_countdown > 0){
+    if (p->switch_in_countdown > 0){//context switch in time
         p->switch_in_countdown -= 1;
         return 1;
-    }else if(p->burst_countdown>0){
+    }else if(p->burst_countdown>0){//cpu burst time
         p->burst_countdown -= 1;
         return 2;
-    }else if(p->switch_out_countdown >0){
+    }else if(p->switch_out_countdown >0){//context switch out time
         p->switch_out_countdown -= 1;
         return 3;
     }else{
@@ -64,6 +64,7 @@ int queue_timePass(struct proc_queue* queue){
     }
     return 1;
 }
+
 
 
 
