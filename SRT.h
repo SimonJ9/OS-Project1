@@ -63,6 +63,7 @@ void sim_SRT(const struct proc_queue* q, const unsigned int t_cs, FILE* out)
     
     while(stillworking)
     {
+        if (switchin == 1) wait--;
         wait += (&rqueue)->_size;
         
         int i;
@@ -264,7 +265,7 @@ void sim_SRT(const struct proc_queue* q, const unsigned int t_cs, FILE* out)
     
     current_time--;
     
-    wait = wait/burst_num-3;
+    wait = wait/burst_num;
     
     cpu = cpu / burst_num;
     turnaround = turnaround / burst_num;
